@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window,document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // Initialize Pixel
+    window.addEventListener('load', function() {
+        if(typeof fbq !== 'undefined') {
+            fbq('init', '1385350829611411');
+            fbq('track', 'PageView');
+            console.log('Facebook Pixel initialized!');
+            document.getElementById('status').textContent = '✅ Pixel Ready!';
+        }
+    });
+    </script>
+    <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1385350829611411&ev=PageView&noscript=1">
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+    
+    <title>Facebook Pixel Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        button {
+            background: #1877F2;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #166FE5;
+        }
+        .status {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Facebook Pixel Test</h1>
+    
+    <div class="status" id="status">
+        Loading Facebook Pixel...
+    </div>
+    
+    <div>
+        <button onclick="sendEvent('Lead')">📝 Send Lead</button>
+        <button onclick="sendEvent('Purchase', {value: 99.99, currency: 'USD'})">💰 Purchase $99.99</button>
+        <button onclick="sendEvent('AddToCart', {value: 49.99, currency: 'USD'})">🛒 Add to Cart</button>
+        <button onclick="sendEvent('ViewContent')">👁️ View Content</button>
+        <button onclick="sendEvent('CompleteRegistration')">📋 Complete Registration</button>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <button onclick="startAutoSend()" style="background: #28a745;">🤖 Start Auto Events</button>
+        <button onclick="stopAutoSend()" style="background: #dc3545;">⏹️ Stop Auto Events</button>
+    </div>
+    
+    <script>
+    let autoInterval = null;
+    let eventCount = 0;
+    
+    function sendEvent(eventName, params = {}) {
+        if(typeof fbq !== 'undefined') {
+            fbq('track', eventName, params);
+            eventCount++;
+            document.getElementById('status').innerHTML = 
+                `✅ Event Sent: <strong>${eventName}</strong><br>
+                 Parameters: ${JSON.stringify(params)}<br>
+                 Total Events Sent: <strong>${eventCount}</strong>`;
+            console.log(`Event ${eventCount}: ${eventName}`, params);
+        } else {
+            document.getElementById('status').textContent = '❌ Pixel not loaded yet';
+        }
+    }
+    
+    function startAutoSend() {
+        if(autoInterval) return;
+        
+        const events = ['PageView', 'ViewContent', 'AddToCart', 'Lead', 'CompleteRegistration'];
+        
+        autoInterval = setInterval(() => {
+            const event = events[Math.floor(Math.random() * events.length)];
+            sendEvent(event);
+        }, 3000); // Every 3 seconds
+        
+        document.getElementById('status').innerHTML = '🤖 Auto events started (every 3 seconds)';
+    }
+    
+    function stopAutoSend() {
+        if(autoInterval) {
+            clearInterval(autoInterval);
+            autoInterval = null;
+            document.getElementById('status').innerHTML = '⏹️ Auto events stopped';
+        }
+    }
+    
+    // Send initial event
+    setTimeout(() => {
+        if(typeof fbq !== 'undefined') {
+            sendEvent('PageView');
+        }
+    }, 1000);
+    </script>
+</body>
+</html>
