@@ -9,32 +9,144 @@
     if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    s.parentNode.insertBefore(t,s)}(window,document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1385350829611411');
-    fbq('track', 'PageView');
+    
+    // Ждем загрузки библиотеки
+    window.onload = function() {
+        if(typeof fbq !== 'undefined') {
+            fbq('init', '1385350829611411');
+            fbq('track', 'PageView');
+            console.log('✅ Facebook Pixel initialized!');
+        }
+    };
     </script>
     <noscript>
     <img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1385350829611411&ev=PageView&noscript=1">
     </noscript>
     <!-- End Facebook Pixel Code -->
-    <title>Pixel Test Site</title>
+    
+    <title>Facebook Pixel Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background: #1877F2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #166FE5;
+        }
+        .status {
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            background: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Facebook Pixel Test Page</h1>
-    <p>This page sends events to Facebook Pixel ID: 1385350829611411</p>
+    <h1>🎯 Facebook Pixel Test Page</h1>
+    <div class="status" id="status">
+        Loading Facebook Pixel...
+    </div>
     
-    <button onclick="fbq('track', 'Lead')">Send Lead Event</button>
-    <button onclick="fbq('track', 'Purchase', {value: 100, currency: 'USD'})">Send Purchase $100</button>
-    <button onclick="fbq('track', 'ViewContent')">View Content</button>
+    <div>
+        <button onclick="sendEvent('Lead')">📝 Send Lead Event</button>
+        <button onclick="sendEvent('Purchase', {value: 99.99, currency: 'USD'})">💰 Purchase $99.99</button>
+        <button onclick="sendEvent('AddToCart', {value: 49.99, currency: 'USD'})">🛒 Add to Cart</button>
+        <button onclick="sendEvent('ViewContent')">👁️ View Content</button>
+        <button onclick="sendEvent('CompleteRegistration')">📋 Complete Registration</button>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <button onclick="startAutoEvents()" style="background: #28a745;">🤖 Start Auto Events (10 events)</button>
+        <button onclick="stopAutoEvents()" style="background: #dc3545;">⏹️ Stop Auto Events</button>
+    </div>
     
     <script>
-    // Auto-send events every 30 seconds
-    setInterval(function() {
-        fbq('track', 'PageView');
-        console.log('Auto-sent PageView event');
-    }, 30000);
+    // Глобальная переменная для отслеживания состояния
+    let autoInterval = null;
+    let eventCount = 0;
+    
+    // Функция отправки событий
+    function sendEvent(eventName, params = {}) {
+        if(typeof fbq !== 'undefined') {
+            fbq('track', eventName, params);
+            document.getElementById('status').innerHTML = 
+                `✅ Sent: <strong>${eventName}</strong> ${JSON.stringify(params)}<br>
+                 Total events: ${++eventCount}`;
+            console.log(`📤 Facebook Event: ${eventName}`, params);
+        } else {
+            document.getElementById('status').innerHTML = 
+                '❌ Facebook Pixel not loaded yet. Wait a moment.';
+        }
+    }
+    
+    // Автоматическая отправка событий
+    function startAutoEvents() {
+        if(autoInterval) return;
+        
+        const events = [
+            'PageView', 'ViewContent', 'AddToCart', 
+            'InitiateCheckout', 'Lead', 'CompleteRegistration'
+        ];
+        
+        autoInterval = setInterval(() => {
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            let params = {};
+            
+            if(randomEvent === 'Purchase') {
+                params = {value: Math.random() * 200 + 50, currency: 'USD'};
+            }
+            if(randomEvent === 'AddToCart') {
+                params = {value: Math.random() * 100 + 10, currency: 'USD'};
+            }
+            
+            sendEvent(randomEvent, params);
+        }, 5000); // Каждые 5 секунд
+        
+        document.getElementById('status').innerHTML = 
+            '🤖 Auto events started! Sending every 5 seconds...';
+    }
+    
+    function stopAutoEvents() {
+        if(autoInterval) {
+            clearInterval(autoInterval);
+            autoInterval = null;
+            document.getElementById('status').innerHTML = 
+                '⏹️ Auto events stopped.';
+        }
+    }
+    
+    // Проверяем загрузку пикселя
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            if(typeof fbq !== 'undefined') {
+                document.getElementById('status').innerHTML = 
+                    '✅ Facebook Pixel loaded successfully!<br>Pixel ID: 1385350829611411<br>Ready to send events.';
+                console.log('🎯 Pixel ready!');
+                
+                // Автоматически отправляем PageView
+                sendEvent('PageView');
+            } else {
+                document.getElementById('status').innerHTML = 
+                    '❌ Facebook Pixel failed to load. Check console.';
+            }
+        }, 2000);
+    });
     </script>
 </body>
 </html>
