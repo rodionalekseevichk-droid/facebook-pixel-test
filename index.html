@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1385350829611411');
+    fbq('track', 'PageView');
+    </script>
+    <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1385350829611411&ev=PageView&noscript=1">
+    </noscript>
+    <!-- End Facebook Pixel Code -->
+    <title>Pixel Test Site</title>
+</head>
+<body>
+    <h1>Facebook Pixel Test Page</h1>
+    <p>This page sends events to Facebook Pixel ID: 1385350829611411</p>
+    
+    <button onclick="fbq('track', 'Lead')">Send Lead Event</button>
+    <button onclick="fbq('track', 'Purchase', {value: 100, currency: 'USD'})">Send Purchase $100</button>
+    <button onclick="fbq('track', 'ViewContent')">View Content</button>
+    
+    <script>
+    // Auto-send events every 30 seconds
+    setInterval(function() {
+        fbq('track', 'PageView');
+        console.log('Auto-sent PageView event');
+    }, 30000);
+    </script>
+</body>
+</html>
